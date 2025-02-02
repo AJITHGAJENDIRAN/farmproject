@@ -16,14 +16,8 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Database Configuration
-username = "rajithgr2002"
-password = urllib.parse.quote_plus("Pass@123")  # Encoding special character '@'
-host = "ajithgr2002.mysql.pythonanywhere-services.com"
-database = "ajithgr2002$farmer"
-
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{username}:{password}@{host}/{database}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_DATABASE_URL']='mysql://username:password@localhost/databas_table_name'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://freedb_ajith:$3&87mz9?Ubfz%U@sql.freedb.tech:3306/freedb_farmer'
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
