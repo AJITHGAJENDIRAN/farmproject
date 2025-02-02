@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, logout_user, login_manager, LoginManager, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,6 +21,18 @@ app.config['SQLALCHEMY_DATABASE_URI']='mysql://freedb_ajith:$3&87mz9?Ubfz%U@sql.
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
+
+@app.route('/test')
+def hello_world():
+    return "Hello, World!"
+
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify({"id": user.id, "username": user.username, "email": user.email})
+    return jsonify({"error": "User not found"}), 404
+
 
 # Define Database Model
 class Test(db.Model):
@@ -210,6 +222,19 @@ def login():
             return render_template('login.html')    
 
     return render_template('login.html')
+
+@app.route('/logintest', methods=['POST'])
+def login_test():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    user = User.query.filter_by(email=email).first()
+
+    if user and check_password_hash(user.password_hash, password):
+        login_user(user)
+        return jsonify({"message": "Login successful", "user_id": user.id}), 200
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
 
 @app.route('/logout')
 @login_required
